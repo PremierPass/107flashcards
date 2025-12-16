@@ -4,18 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FAA Part 107 Study App</title>
-    
-    <!-- ======================================================= -->
-    <!-- GOOGLE ADSENSE SCRIPT SECTION                           -->
-    <!-- 1. Go to your Google AdSense Account                    -->
-    <!-- 2. Get the "Auto Ads" script or site script             -->
-    <!-- 3. PASTE IT BELOW THIS LINE                             -->
-    <!-- ======================================================= -->
-    
-    <!-- PASTE SCRIPT HERE -->
-
-    <!-- ======================================================= -->
-
     <style>
         :root {
             --primary: #2563eb;
@@ -47,10 +35,26 @@
             padding: 1rem;
             text-align: center;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: relative;
         }
 
         h1 { margin: 0; font-size: 1.5rem; }
         .subtitle { font-size: 0.9rem; opacity: 0.9; margin-top: 0.25rem; }
+        
+        .help-icon {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            cursor: pointer;
+            font-size: 1.2rem;
+            background: rgba(255,255,255,0.2);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
         /* Main Layout */
         main {
@@ -161,6 +165,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            /* UPDATED PADDING: Increased top padding to prevent category tag overlap */
             padding: 4rem 1.5rem 1.5rem 1.5rem;
             box-sizing: border-box;
             text-align: center;
@@ -239,6 +244,8 @@
             border-radius: 4px;
             overflow: hidden;
             display: none;
+            background: #f9fafb;
+            position: relative;
         }
 
         .card-image {
@@ -248,6 +255,34 @@
             max-height: 250px;
             object-fit: contain;
             cursor: zoom-in;
+            display: block;
+            margin: 0 auto;
+        }
+
+        /* Missing Image Placeholder Style */
+        .img-error-msg {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            color: #ef4444;
+            text-align: center;
+            font-size: 0.9rem;
+            background: #fef2f2;
+            height: 100%;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        .img-upload-label {
+            margin-top: 0.5rem;
+            background: #2563eb;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
         }
         
         .answer-text {
@@ -368,21 +403,6 @@
             max-width: 600px;
         }
 
-        /* Ad Container */
-        .ad-container {
-            width: 100%;
-            max-width: 728px;
-            min-height: 90px;
-            background-color: #fafafa;
-            border: 1px dashed #e5e7eb;
-            margin: 2rem 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #9ca3af;
-            font-size: 0.8rem;
-        }
-
         /* Image Modal (Zoom) */
         .modal {
             display: none; 
@@ -416,7 +436,7 @@
         }
 
         /* Report Modal & Login Modal Shared */
-        #reportModal .modal-box, #loginModal .modal-box {
+        #reportModal .modal-box, #loginModal .modal-box, #helpModal .modal-box {
             background: white; 
             margin: 5% auto; 
             padding: 2rem; 
@@ -428,6 +448,7 @@
             display: flex;
             flex-direction: column;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            overflow-y: auto;
         }
 
         #reportText {
@@ -457,6 +478,7 @@
 <header>
     <h1>✈️ FAA Part 107 Prep</h1>
     <div class="subtitle">FAA Part107 Flashcards & Quizzes</div>
+    <div class="help-icon" onclick="document.getElementById('helpModal').style.display='flex'">?</div>
 </header>
 
 <main>
@@ -512,7 +534,7 @@
                     <button class="star-btn" id="fcStarBtn" onclick="toggleStar(event)">☆</button>
                     
                     <div class="card-image-container" id="fcImgContainer">
-                        <img src="" alt="Question Image" class="card-image" id="fcImg" onclick="openModal(event)">
+                        <img src="" alt="Question Image" class="card-image" id="fcImg" onclick="openModal(event)" onerror="handleImageError(this)">
                     </div>
 
                     <div class="card-content" id="fcQuestion">Question goes here...</div>
@@ -549,7 +571,7 @@
             <button class="star-btn" id="qzStarBtn" onclick="toggleStar(event)" style="top: 1.5rem; right: 1.5rem;">☆</button>
             
             <div class="card-image-container" id="qzImgContainer" style="display:none; max-height: 300px; margin-bottom: 1rem;">
-                <img src="" alt="Quiz Image" class="card-image" id="qzImg" onclick="openModal(event)">
+                <img src="" alt="Quiz Image" class="card-image" id="qzImg" onclick="openModal(event)" onerror="handleImageError(this)">
             </div>
 
             <div style="font-size: 1.2rem; margin-bottom: 1.5rem;" id="qzQuestion">Question...</div>
@@ -570,19 +592,6 @@
             </div>
         </div>
     </div>
-
-    <!-- AD SLOT CONTAINER -->
-    <!-- ======================================================= -->
-    <!-- GOOGLE ADSENSE AD UNIT SECTION                          -->
-    <!-- 1. Create a "Display Ad" unit in AdSense                -->
-    <!-- 2. Copy the <ins> code snippet                          -->
-    <!-- 3. PASTE IT INSIDE THE DIV BELOW                        -->
-    <!-- ======================================================= -->
-    <div class="ad-container">
-        <!-- PASTE AD UNIT CODE HERE -->
-        <span>Advertisement</span> 
-    </div>
-    <!-- ======================================================= -->
 
     <div class="stats" id="statsFooter">
         Cards Mastered: <span id="masteredCount">0</span> / <span id="totalCount">0</span>
@@ -628,125 +637,38 @@
     </div>
 </div>
 
+<!-- Help Modal -->
+<div id="helpModal" class="modal" style="display:none; background-color: rgba(0,0,0,0.5);">
+    <div class="modal-box">
+        <span onclick="document.getElementById('helpModal').style.display='none'" style="position: absolute; top: 10px; right: 15px; cursor: pointer; font-size: 1.5rem;">&times;</span>
+        <h2 style="margin-top: 0;">App Help & Setup</h2>
+        
+        <h3>Images Missing?</h3>
+        <p>If an image is missing, a "Load Image" button will appear. Click it to select the chart file (e.g., Figure 25) from your computer. The app will save it for future use.</p>
+
+        <h3>Controls</h3>
+        <ul style="text-align: left;">
+            <li><strong>Subject:</strong> Filter cards by topic.</li>
+            <li><strong>Count:</strong> Choose how many cards to study per session.</li>
+            <li><strong>Star (★):</strong> Bookmark hard questions to study later.</li>
+            <li><strong>Report Issue:</strong> Flag a question that seems wrong.</li>
+        </ul>
+        
+        <button class="primary" onclick="document.getElementById('helpModal').style.display='none'" style="margin-top: 1rem;">Got it!</button>
+    </div>
+</div>
+
 <script>
     /* INSTRUCTIONS FOR ADDING IMAGES:
-       1. Create a folder named 'images' in the same directory as this file.
-       2. Download the FAA-CT-8080-2H PDF.
-       3. Take screenshots of Figure 25 and Legend 1.
-       4. Save them as 'figure25.jpg' and 'legend1.jpg' inside the images folder.
+       1. Place your image files (jpg/png) in a folder named 'images' next to this file.
+       2. Add the filename to the 'img' property in the questionData below.
+       3. Example: img: "images/figure23.jpg"
     */
 
     const demoImage = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgMTUwIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjE1MCIgZmlsbD0iI2IyMDIwMiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkeT0iLjM1ZW0iIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IndoaXRlIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSI2MCIgZm9udC13ZWlnaHQ9ImJvbGQiPjE1LTMzPC90ZXh0Pjwvc3ZnPg==";
 
     // --- DATA: FAA Part 107 Questions (Expanded Question Bank with ACS) ---
     const questionData = [
-        
-        // ... (Existing questions 1-205 remain here, I am appending the new ones below) ...
-
-        // --- NEW SECTIONAL CHART QUESTIONS (FIGURE 25) ---
-        { 
-            id: 206, 
-            category: "Charts", 
-            acs: "UA.II.A.K2", 
-            question: "(Refer to Figure 25) What is the floor of Class E airspace surrounding the private airport 'Cooperstown'?", 
-            options: ["700 feet AGL", "1200 feet AGL", "Surface"], 
-            answer: "700 feet AGL", 
-            explanation: "The shaded magenta line indicates Class E airspace begins at 700 feet AGL.", 
-            img: "images/figure25.jpg" 
-        },
-        { 
-            id: 207, 
-            category: "Charts", 
-            acs: "UA.II.A.K2", 
-            question: "(Refer to Figure 25) Locate the tower near the center. What is the height of the obstruction in Mean Sea Level (MSL)?", 
-            options: ["The top number (e.g. 1548)", "The bottom number in parentheses", "The blue number"], 
-            answer: "The top number (e.g. 1548)", 
-            explanation: "On sectional charts, the bold number is MSL. The number in parentheses is AGL.", 
-            img: "images/figure25.jpg" 
-        },
-        { 
-            id: 208, 
-            category: "Charts", 
-            acs: "UA.II.A.K2", 
-            question: "(Refer to Figure 25) What is the CTAF/MULTICOM frequency for the non-towered airport shown?", 
-            options: ["122.9", "118.0", "121.5"], 
-            answer: "122.9", 
-            explanation: "Look for the 'C' circle symbol next to a frequency. For many non-towered airports without a specific CTAF, 122.9 (MULTICOM) is used.", 
-            img: "images/figure25.jpg" 
-        },
-        { 
-            id: 209, 
-            category: "Charts", 
-            acs: "UA.II.A.K2", 
-            question: "(Refer to Figure 25) Is there a Control Tower at the main airport shown in this figure?", 
-            options: ["No, it is Magenta", "Yes, it is Blue", "Yes, it is Magenta"], 
-            answer: "No, it is Magenta", 
-            explanation: "Magenta airport symbols indicate non-towered (uncontrolled) airports. Blue indicates towered airports.", 
-            img: "images/figure25.jpg" 
-        },
-        { 
-            id: 210, 
-            category: "Charts", 
-            acs: "UA.II.A.K2", 
-            question: "(Refer to Figure 25) Determine the approximate latitude and longitude of the central airport.", 
-            options: ["Use the tick marks on the grid lines", "Guess based on city location", "Use GPS"], 
-            answer: "Use the tick marks on the grid lines", 
-            explanation: "Each black tick mark represents 1 minute of latitude or longitude. Large lines are 30 minutes or whole degrees.", 
-            img: "images/figure25.jpg" 
-        },
-
-        // --- NEW LEGEND QUESTIONS (LEGEND 1) ---
-        { 
-            id: 211, 
-            category: "Charts", 
-            acs: "UA.II.A.K2", 
-            question: "(Refer to Legend 1) What does a star on top of the airport symbol indicate?", 
-            options: ["Rotating Beacon is in operation (Sunset to Sunrise)", "Airport is closed", "Military base"], 
-            answer: "Rotating Beacon is in operation (Sunset to Sunrise)", 
-            explanation: "The star symbol above the airport circle indicates a rotating beacon is present and operating.", 
-            img: "images/legend1.jpg" 
-        },
-        { 
-            id: 212, 
-            category: "Charts", 
-            acs: "UA.II.A.K2", 
-            question: "(Refer to Legend 1) What do the tick marks extending from the airport circle indicate?", 
-            options: ["Fuel is available", "Runway is paved", "Fencing"], 
-            answer: "Fuel is available", 
-            explanation: "Tick marks around the circle indicate that fuel is available during normal working hours.", 
-            img: "images/legend1.jpg" 
-        },
-        { 
-            id: 213, 
-            category: "Charts", 
-            acs: "UA.II.A.K2", 
-            question: "(Refer to Legend 1) How are hard-surfaced runways depicted?", 
-            options: ["Thick solid lines showing the runway layout", "An empty circle", "A red 'X'"], 
-            answer: "Thick solid lines showing the runway layout", 
-            explanation: "Hard-surfaced runways (asphalt/concrete) are depicted by their actual layout pattern inside the circle.", 
-            img: "images/legend1.jpg" 
-        },
-        { 
-            id: 214, 
-            category: "Charts", 
-            acs: "UA.II.A.K2", 
-            question: "(Refer to Legend 1) What is the difference between Blue and Magenta airport symbols?", 
-            options: ["Blue = Control Tower; Magenta = No Tower", "Blue = Military; Magenta = Civilian", "Blue = Water; Magenta = Land"], 
-            answer: "Blue = Control Tower; Magenta = No Tower", 
-            explanation: "Blue airports have control towers (at least part-time). Magenta airports do not.", 
-            img: "images/legend1.jpg" 
-        },
-        { 
-            id: 215, 
-            category: "Charts", 
-            acs: "UA.II.A.K2", 
-            question: "(Refer to Legend 1) What does the letter 'R' inside a circle indicate?", 
-            options: ["Private (Pvt) or Restricted Airport", "Radar services available", "Runway lights"], 
-            answer: "Private (Pvt) or Restricted Airport", 
-            explanation: "An 'R' usually denotes a private, restricted, or non-public use landing area.", 
-            img: "images/legend1.jpg" 
-        },
-
         // --- REGULATIONS (Core) ---
         { id: 1, category: "Regulations", acs: "UA.I.B.K21", question: "According to 14 CFR Part 107, what is the maximum groundspeed for a small UA?", options: ["87 knots (100 mph)", "100 knots (115 mph)", "80 knots (90 mph)"], answer: "87 knots (100 mph)", explanation: "Section 107.51 states the maximum groundspeed is 87 knots (100 miles per hour).", img: null },
         { id: 2, category: "Regulations", acs: "UA.I.A.K1", question: "When must a person register a small UA with the FAA?", options: ["If it weighs > 0.55 lbs", "If used commercially", "All of the above"], answer: "If it weighs > 0.55 lbs", explanation: "All sUAS weighing more than 0.55 lbs (250g) and less than 55 lbs must be registered.", img: null },
@@ -1071,8 +993,6 @@
         }
     ];
 
-    // ... (rest of the script remains unchanged)
-    
     // --- STATE MANAGEMENT ---
     let currentDeck = [];
     let currentIndex = 0;
@@ -1082,7 +1002,8 @@
     let reviewList = [];
     let masteredList = [];
     let starredList = []; 
-    
+    let cachedImages = {}; // New: Store uploaded images
+
     let studentName = "";
     let studentClass = "";
     let teacherEmail = ""; 
@@ -1110,6 +1031,48 @@
 
     // --- RENDER LOGIC ---
 
+    // NEW: Handle missing image logic
+    function handleImageError(img) {
+        const card = currentDeck[currentIndex];
+        const filename = card.img.split('/').pop(); // Extract filename like 'figure25.jpg'
+        const parent = img.parentElement;
+        
+        img.style.display = 'none'; // hide broken image icon
+        
+        // Avoid duplicate messages
+        if (parent.querySelector('.img-error-msg')) return;
+
+        const msgDiv = document.createElement('div');
+        msgDiv.className = 'img-error-msg';
+        
+        msgDiv.innerHTML = `
+            <strong>⚠️ Image Missing: ${filename}</strong>
+            <p>If you have this chart file on your computer, you can load it now.</p>
+            <label class="img-upload-label">
+                📂 Load ${filename}
+                <input type="file" style="display:none" accept="image/*" onchange="uploadImage(this, '${card.img}')">
+            </label>
+        `;
+        parent.appendChild(msgDiv);
+        parent.style.display = 'block';
+    }
+
+    // NEW: Upload function
+    function uploadImage(input, path) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                // Save to cache
+                cachedImages[path] = e.target.result;
+                saveImagesToStorage();
+                
+                // Refresh current card to show image
+                renderCard();
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
     function renderCard() {
         if (currentDeck.length === 0) {
             alert("No cards available in this filter!");
@@ -1130,14 +1093,43 @@
         document.getElementById('fcAcsBack').textContent = acsText;
         document.getElementById('qzAcs').textContent = acsText;
 
+        // Image Handling Logic (Flashcard)
         const fcImgContainer = document.getElementById('fcImgContainer');
         const fcImg = document.getElementById('fcImg');
-        
+        const existingMsg = fcImgContainer.querySelector('.img-error-msg');
+        if(existingMsg) existingMsg.remove(); // Clear error msg
+
         if (card.img) {
-            fcImg.src = card.img;
             fcImgContainer.style.display = 'block';
+            // Check if we have a cached version (user uploaded)
+            if (cachedImages[card.img]) {
+                fcImg.src = cachedImages[card.img];
+                fcImg.style.display = 'block';
+            } else {
+                fcImg.src = card.img; // Attempt normal load, will trigger onerror if missing
+                fcImg.style.display = 'block';
+            }
         } else {
             fcImgContainer.style.display = 'none';
+        }
+
+        // Image Handling Logic (Quiz) - Same logic
+        const qzImgContainer = document.getElementById('qzImgContainer');
+        const qzImg = document.getElementById('qzImg');
+        const existingMsgQz = qzImgContainer.querySelector('.img-error-msg');
+        if(existingMsgQz) existingMsgQz.remove();
+
+        if (card.img) {
+            qzImgContainer.style.display = 'block';
+            if (cachedImages[card.img]) {
+                qzImg.src = cachedImages[card.img];
+                qzImg.style.display = 'block';
+            } else {
+                qzImg.src = card.img;
+                qzImg.style.display = 'block';
+            }
+        } else {
+            qzImgContainer.style.display = 'none';
         }
 
         const cardEl = document.getElementById('flashcard');
@@ -1150,16 +1142,6 @@
         document.getElementById('qzCategory').textContent = card.category;
         document.getElementById('qzQuestion').textContent = card.question;
         document.getElementById('qzFeedback').style.display = 'none';
-        
-        const qzImgContainer = document.getElementById('qzImgContainer');
-        const qzImg = document.getElementById('qzImg');
-
-        if (card.img) {
-            qzImg.src = card.img;
-            qzImgContainer.style.display = 'block';
-        } else {
-            qzImgContainer.style.display = 'none';
-        }
         
         const optsContainer = document.getElementById('qzOptions');
         optsContainer.innerHTML = '';
@@ -1216,7 +1198,8 @@
     }
 
     function flipCard(event) {
-        if (event.target.classList.contains('card-image') || event.target.classList.contains('star-btn')) return;
+        // Updated to prevent flip on upload elements too
+        if (event.target.closest('.card-image-container') || event.target.closest('.star-btn')) return;
 
         if (isQuizMode) return;
         const cardEl = document.getElementById('flashcard');
@@ -1287,9 +1270,8 @@
     function showSummaryScreen() {
         document.getElementById('flashcardMode').classList.add('hidden');
         document.getElementById('quizMode').classList.add('hidden');
-        document.getElementById('controlsDiv').classList.add('hidden'); // Hide top controls
+        document.getElementById('controlsDiv').classList.add('hidden'); 
         
-        // Calculate session stats
         let sessionMastered = 0;
         let sessionReview = 0;
         
@@ -1305,7 +1287,6 @@
         `;
         document.getElementById('summaryStats').innerHTML = statsHTML;
         
-        // Show/Hide Review Button based on if there are items to review
         const reviewBtn = document.getElementById('summaryReviewBtn');
         if (reviewList.length > 0) {
             reviewBtn.style.display = 'inline-block';
@@ -1321,14 +1302,12 @@
         document.getElementById('summaryScreen').classList.add('hidden');
         document.getElementById('controlsDiv').classList.remove('hidden');
         
-        // Restore view based on mode
         if (isQuizMode) {
             document.getElementById('quizMode').classList.remove('hidden');
         } else {
             document.getElementById('flashcardMode').classList.remove('hidden');
         }
         
-        // Reset index and reshuffle same deck
         currentDeck = shuffleDeck(currentDeck);
         currentIndex = 0;
         isFlipped = false;
@@ -1336,7 +1315,6 @@
     }
 
     function returnToMenu() {
-        // Just re-apply filters which effectively resets to start
         document.getElementById('summaryScreen').classList.add('hidden');
         document.getElementById('controlsDiv').classList.remove('hidden');
         applyFilters();
@@ -1453,7 +1431,6 @@
         currentIndex = 0;
         isFlipped = false;
         
-        // Ensure UI is visible if coming from summary
         document.getElementById('summaryScreen').classList.add('hidden');
         document.getElementById('controlsDiv').classList.remove('hidden');
         if (isQuizMode) {
@@ -1668,9 +1645,21 @@
     }
 
     function updateProgress() {
-        // Calculate progress based on current session position
         const percent = ((currentIndex) / currentDeck.length) * 100;
         document.getElementById('progressBar').style.width = percent + '%';
+    }
+
+    // NEW: Save uploaded images to local storage
+    function saveImagesToStorage() {
+        try {
+            // Check storage limit first (basic check)
+            const stringData = JSON.stringify(cachedImages);
+            if(stringData.length < 4000000) { // Limit to ~4MB
+                 localStorage.setItem('faa_cachedImages', stringData);
+            }
+        } catch (e) {
+            console.log("Storage full or error saving images");
+        }
     }
 
     function saveProgress() {
@@ -1686,10 +1675,12 @@
             const savedReview = localStorage.getItem('faa_reviewList');
             const savedMastered = localStorage.getItem('faa_masteredList');
             const savedStarred = localStorage.getItem('faa_starredList'); 
+            const savedImages = localStorage.getItem('faa_cachedImages');
             
             if (savedReview) reviewList = JSON.parse(savedReview);
             if (savedMastered) masteredList = JSON.parse(savedMastered);
             if (savedStarred) starredList = JSON.parse(savedStarred);
+            if (savedImages) cachedImages = JSON.parse(savedImages);
         } catch (e) {}
     }
 
